@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Cuídate - BootcampFamily</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="card" id="card">
+            <div class="front">
+                <h1>Cuídate,Amigo</h1>
+                <h2>¿No si Orbide </h2>
+                <div class="buttons">
+                    <button onclick="mostrarMensaje(1)"><i class="fas fa-tint"></i> Hidratándome</button>
+                    <button onclick="mostrarMensaje(2)"><i class="fas fa-utensils"></i> Alimentándome</button>
+                    <button onclick="mostrarMensaje(3)"><i class="fas fa-hands-helping"></i> Ayúdame</button>
+                    <button onclick="mostrarMensaje(4)"><i class="fas fa-smile"></i> Hora de Descanso</button>
+                </div>
+            </div>
+            <div class="back">
+                <p id="mensajeTexto"></p>
+                <button onclick="girarCard()"><i class="fas fa-undo-alt"></i> Volver</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="album-container">
+        <div class="album">
+            <img id="fotoAlbum" src="/img/galeria/foto1.png" alt="Foto actual" />
+            <p id="fraseFoto">Juntos construimos más que código: construimos confianza.</p>
+            <div class="controles">
+                <button onclick="cambiarFoto(-1)">⬅</button>
+                <button onclick="cambiarFoto(1)">➡</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <button id="toggleMode"><i class="fas fa-moon"></i> Cambiar a Modo Noche</button>
+
+    <audio id="modoSonido" src="audio/mixinternacionalhope-you-come-back.mp3" preload="auto"></audio>
+    <audio id="audioRespuesta" preload="auto"></audio>
+
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+  import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBgyXS0rdv2xFwi9-DGHM0BYtieG3KG2Zs",
+    authDomain: "bootcampfamilycuidate.firebaseapp.com",
+    projectId: "bootcampfamilycuidate",
+    storageBucket: "bootcampfamilycuidate.firebasestorage.app",
+    messagingSenderId: "25065302077",
+    appId: "1:25065302077:web:cccbe65d6a65a547096254",
+    databaseURL: "https://bootcampfamilycuidate-default-rtdb.firebaseio.com"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // Escutar interações ao vivo
+  const mural = document.createElement("div");
+  mural.id = "muralInteracoes";
+  mural.style.position = "fixed";
+  mural.style.bottom = "10px";
+  mural.style.left = "10px";
+  mural.style.background = "#fff8dc";
+  mural.style.padding = "12px";
+  mural.style.borderRadius = "12px";
+  mural.style.fontFamily = "Arial, sans-serif";
+  mural.style.maxHeight = "200px";
+  mural.style.overflowY = "auto";
+  mural.style.boxShadow = "0 0 10px rgba(0,0,0,0.2)";
+  document.body.appendChild(mural);
+
+  onChildAdded(ref(db, "interacoes"), (snapshot) => {
+    const data = snapshot.val();
+    const linha = document.createElement("p");
+    linha.textContent = `${data.usuario} interagiu: ${data.acao}`;
+    mural.appendChild(linha);
+  });
+
+  // Disponibilizar função global para salvar interações
+  window.registrarInteracao = function(usuario, acao) {
+    push(ref(db, "interacoes"), {
+      usuario: usuario,
+      acao: acao,
+      hora: Date.now()
+    });
+  };
+</script>
+
+
+
+    <script src="script.js"></script>
+</body>
+
+</html>
